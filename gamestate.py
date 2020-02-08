@@ -7,7 +7,7 @@ class GameState:
         self.width = width
         self.startHealth = startHealth
         self.startResources = startResources
-        self.players = []
+        self.players = {}
         self.bases = []
         self.resources = []
         self.projectiles = []
@@ -18,7 +18,7 @@ class GameState:
         locationY = random.randrange(0, self.height)
         new_id = uuid.uuid4()
         tempPlayer = Player(name, new_id, locationX, locationY, self.startHealth, self.startResources, False)
-        self.players.append(tempPlayer)
+        self.players[new_id] = tempPlayer
         return new_id
 
     def createBoundWalls(self):
