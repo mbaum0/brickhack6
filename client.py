@@ -5,11 +5,27 @@ import threading
 import time
 from clientmessages import *
 
-gamestate = None
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_host = "localhost"
 server_port = 5555
-username = sys.argv[1]
+username = "user"
+
+# Input parser
+numargs = len(sys.argv)
+if numargs == 2:
+    username = sys.argv[1]
+elif numargs == 3:
+    username = sys.argv[1]
+    server_host = sys.argv[2]
+elif numargs > 3:
+    username = sys.argv[1]
+    server_host = sys.argv[2]
+    server_port = sys.argv[3]
+else:
+    print("USAGE: {} <username> <servername> <port>".format(sys.argv[0]))
+    exit()
+
+gamestate = None
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 my_id = None
 
 def connect_to_server(host, port):
