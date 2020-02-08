@@ -16,8 +16,10 @@ class GameState:
     def newPlayer(self, name):
         locationX = random.randrange(0, self.width)
         locationY = random.randrange(0, self.height)
-        tempPlayer = Player(name, uuid.uuid4(), locationX, locationY, self.startHealth, self.startResources, False)
+        new_id = uuid.uuid4()
+        tempPlayer = Player(name, new_id, locationX, locationY, self.startHealth, self.startResources, False)
         self.players.append(tempPlayer)
+        return new_id
 
     def createBoundWalls(self):
         topWall = Wall(0, 0, self.width, 0)
