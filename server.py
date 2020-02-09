@@ -3,11 +3,10 @@ import time
 import socket
 import threading
 import logging
+import queue
 from gamestate import GameState
 
-
-
-def on_new_client(client, connection):
+def on_new_client(client, connection, bcast_q):
     ip = connection[0]
     port = connection[1]
     logging.debug("New connection from {} on {}".format(ip, port))
@@ -18,13 +17,21 @@ def on_new_client(client, connection):
     
     while True:
         try:
-            client.sendall(pickle.dumps(gamestate))
-            time.sleep(1)
+            if not bcast_q.empty():
+                bcast_msg = bcast_q.get()
+                client.sendall(pickle.dumps(bcast_msg))
         except ConnectionResetError:
             logging.debug("{} left [{}]".format(data.name, str(data.id)))
             break
 
     client.close()
+
+def broadcast_all_clients(name):
+    for q in clients:
+        q.put(gamestate)
+    
+    time.sleep(2)
+
 
 if __name__ == "__main__":
 
@@ -35,6 +42,9 @@ if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 5555
     sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    clients = []
+
+    threading._start_new_thread(broadcast_all_clients, ("broadcaster",))
 
     try:
         sock.bind((HOST, PORT))
@@ -45,7 +55,10 @@ if __name__ == "__main__":
     while True:
         try:
             client, ip = sock.accept()
-            threading._start_new_thread(on_new_client, (client, ip))
+            client.setblocking(0)
+            bcast_q = queue.Queue()
+            clients.append(bcast_q)
+            threading._start_new_thread(on_new_client, (client, ip, bcast_q))
         except KeyboardInterrupt:
             logging.error("F this gracefully")
         except Exception as e:
