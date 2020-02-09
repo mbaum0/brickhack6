@@ -1,35 +1,67 @@
 from gamestate import GameState
 import logging
-import time
-from gamestate import THE_GAMESTATE
-from clientmessages import KeyEventMessage, MouseEventMessage, Keys, ButtonState
+import time, math
+from gamestate import THE_GAMESTATE, Projectile
+from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
+
+class Movement:
+    def __init__(self, player, dx, dy):
+        self.player = player
+        self.dx = dx
+        self.dy = dy
 
 def update_game(game_updater_q):
+    # Key = player ID
+    # Value = Movement obj
+    movements = {}
     while True:
         if not game_updater_q.empty():
             event, id = game_updater_q.get()
-            player = THE_GAMESTATE.players[id]
             if isinstance(event, KeyEventMessage):
-                handleKeyPress(event, id)
+                handleKeyPress(event, id, movements)
             elif isinstance(event, MouseEventMessage):
-                pass
-            player.y += player.y_delt
-            player.x += player.x_delt
-
+                handleMousePress(event, id)
+        # Update player positions
+        for id in movements.keys():
+            movement = movements[id]
+            player = movement.player
+            player.x += movement.dx
+            player.y += movement.dy
 
         time.sleep(.1)
 
-def handleKeyPress(event, id):
-    player = THE_GAMESTATE.players[id]
+def handleKeyPress(event, id, moving_players):
+    if not id in moving_players.keys():
+        move = Movement(THE_GAMESTATE.players[id], 0, 0)
+    else:
+        move = moving_players[id]
     if event.command is Keys.UP_PRESS:
-        player.y_delt = -5
+        move.dy = -5
     elif event.command is Keys.DOWN_PRESS:
-        player.y_delt = 5
+        move.dy = 5
     elif event.command is Keys.LEFT_PRESS:
-        player.x_delt = -5
+        move.dx = -5
     elif event.command is Keys.LEFT_PRESS:
-        player.x_delt = 5
+        move.dx = 5
     elif event.command is Keys.UP_RELEASE or event.command is Keys.DOWN_RELEASE:
-        player.y_delt = 0
+        move.dy = 0
     elif event.command is Keys.RIGHT_RELEASE or event.command is Keys.LEFT_RELEASE:
-        player.x_delt = 0
+        move.dx = 0
+
+    # Remove non moving player from movements dictionary
+    if move.dx == 0 and move.dy == 0:
+        del moving_players[id]
+
+def handleMousePress(event, id):
+    player = THE_GAMESTATE.players[id]
+    if not event.command is Trigger.PRESSED:
+        return
+    if (event.x - player.x) == 0:
+        slope = event.y - player.y/1
+    else:
+        slope = (event.y - player.y)/(event.x - player.x)
+    theta = math.atan(slope)
+    if (event.x - player.x) < 0:
+        theta += math.pi
+    THE_GAMESTATE.projectiles.append(Projectile(id, player.x, player.y, theta))
+

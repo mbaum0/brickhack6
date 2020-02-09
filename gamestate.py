@@ -1,5 +1,6 @@
 import uuid
 import random
+import pygame
 
 class GameState:
     def __init__(self, fps, height, width, startHealth, startResources):
@@ -68,11 +69,13 @@ class Resource:
 
 
 class Projectile:
-    def __init__(self, clientID, x, y, damage):
+    def __init__(self, clientID, x, y, angle):
         self.clientID = -1
         self.x = 0
         self.y = 0
-        self.damage = 0
+        self.angle = angle
+        self.damage = 1
+        self.vel = 10
 
 
 class Wall:
