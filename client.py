@@ -8,7 +8,9 @@ import pygame as pg
 from gamesettings import *
 from map import add_resources
 from sprites import MakeSprites
-from clientmessages import ConnectMessage
+from clientmessages import *
+import queue
+
 
 server_host = "localhost"
 server_port = 5555
@@ -17,10 +19,12 @@ username = "user"
 gamestate = None
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 my_id = None
+messageQ = queue.Queue()
 
 def connect_to_server(host, port):
     global gamestate
     global my_id
+    global messageQ
     try:
         # Initial connection
         print("{} {}".format(host,port), flush=True)
@@ -45,7 +49,10 @@ def connect_to_server(host, port):
 
             received = sock.recv(length)
             gamestate = pickle.loads(received)
-            print(gamestate, flush=True)
+            #print(gamestate, flush=True)
+
+            if not messageQ.empty():
+                sock.sendall(pickle.dumps(messageQ.get()))
 
     except ConnectionResetError:
         print("Server disconnected", flush=True)
@@ -83,11 +90,35 @@ def redraw_window():
 Main function to update game display based upon game state
 """
 def run_game():
+    global messageQ
     while True:
         redraw_window()
 
-        for _ in pg.event.get():
-            pass
+        for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_UP:
+                        messageQ.put(KeyEventMessage(Keys.UP_PRESS))
+                    elif event.key == pg.K_DOWN:
+                        messageQ.put(KeyEventMessage(Keys.DOWN_PRESS))
+                    elif event.key == pg.K_LEFT:
+                        messageQ.put(KeyEventMessage(Keys.LEFT_PRESS))
+                    elif event.key == pg.K_RIGHT:
+                        messageQ.put(KeyEventMessage(Keys.RIGHT_PRESS))
+
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_UP:
+                        messageQ.put(KeyEventMessage(Keys.UP_RELEASE))
+                    elif event.key == pg.K_DOWN:
+                        messageQ.put(KeyEventMessage(Keys.DOWN_RELEASE))
+                    elif event.key == pg.K_LEFT:
+                        messageQ.put(KeyEventMessage(Keys.LEFT_RELEASE))
+                    elif event.key == pg.K_RIGHT:
+                        messageQ.put(KeyEventMessage(Keys.RIGHT_RELEASE))
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    messageQ.put(MouseEventMessage(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], Trigger.PRESSED))
+                if event.type == pg.MOUSEBUTTONUP:
+                    messageQ.put(MouseEventMessage(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], Trigger.RELEASED))
+
 
 """ MAIN
     1. Parse command line input

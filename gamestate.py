@@ -1,5 +1,6 @@
 import uuid
 import random
+import pygame
 from gamesettings import *
 
 class GameState:
@@ -69,11 +70,13 @@ class Resource:
 
 
 class Projectile:
-    def __init__(self, clientID, x, y, damage):
+    def __init__(self, clientID, x, y, angle):
         self.clientID = -1
-        self.x = 0
-        self.y = 0
-        self.damage = 0
+        self.x = x
+        self.y = y
+        self.angle = angle
+        self.damage = 1
+        self.vel = 10
 
 
 class Wall:
@@ -91,4 +94,4 @@ class Snitch:
         self.visible = False
 
 
-THE_GAMESTATE = GameState(.1, WIDTH, HEIGHT, 10, 1000)
+THE_GAMESTATE = GameState(.03, WIDTH, HEIGHT, 10, 1000)
