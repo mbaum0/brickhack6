@@ -51,11 +51,11 @@ def on_new_client(client, connection, bcast_q, game_updater_q):
                 pass
 
         except (ConnectionResetError, EOFError):
-            logging.debug("{} left [{}]".format(data.name, str(data.id)))
-            del client_qs[data.id]
-            THE_GAMESTATE.remove_player(data.id)
             break
 
+    logging.debug("{} left [{}]".format(data.name, str(data.id)))
+    del client_qs[data.id]
+    THE_GAMESTATE.remove_player(data.id)
     client.close()
 
 """ broadcast_all_clients
@@ -120,9 +120,5 @@ if __name__ == "__main__":
         except Exception as e:
             logging.error("F this hard: {e}".format(e))
             break
-    
-    for t in client_threads:
-        t.join()
-        
-    
+
     sock.close()
