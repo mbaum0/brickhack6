@@ -105,23 +105,23 @@ def run_game():
                     if event.key == pg.K_ESCAPE:
                         window.quit()
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_UP:
+                    if event.key == pg.K_w:
                         messageQ.put(KeyEventMessage(Keys.UP_PRESS))
-                    elif event.key == pg.K_UP:
+                    elif event.key == pg.K_s:
                         messageQ.put(KeyEventMessage(Keys.DOWN_PRESS))
-                    elif event.key == pg.K_LEFT:
+                    elif event.key == pg.K_a:
                         messageQ.put(KeyEventMessage(Keys.LEFT_PRESS))
-                    elif event.key == pg.K_RIGHT:
+                    elif event.key == pg.K_d:
                         messageQ.put(KeyEventMessage(Keys.RIGHT_PRESS))
 
                 if event.type == pg.KEYUP:
-                    if event.key == pg.K_UP:
+                    if event.key == pg.K_w:
                         messageQ.put(KeyEventMessage(Keys.UP_RELEASE))
-                    elif event.key == pg.K_DOWN:
+                    elif event.key == pg.K_s:
                         messageQ.put(KeyEventMessage(Keys.DOWN_RELEASE))
-                    elif event.key == pg.K_LEFT:
+                    elif event.key == pg.K_a:
                         messageQ.put(KeyEventMessage(Keys.LEFT_RELEASE))
-                    elif event.key == pg.K_RIGHT:
+                    elif event.key == pg.K_d:
                         messageQ.put(KeyEventMessage(Keys.RIGHT_RELEASE))
                 if event.type == pg.MOUSEBUTTONDOWN:
                     messageQ.put(MouseEventMessage(pg.mouse.get_pos()[0], pg.mouse.get_pos()[1], Trigger.PRESSED))
