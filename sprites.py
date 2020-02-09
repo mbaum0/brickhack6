@@ -22,6 +22,11 @@ class MakeSprites:
         self.player = PlayerSprite(self, ID, gamestate.players[ID])
         self.player.image.fill(BLUE)
 
+        self.projectiles = pg.sprite.Group()
+
+        for proj in gamestate.projectiles:
+            ProjectileSprite(self, proj)
+
 
 class PlayerSprite(pg.sprite.Sprite):
     def __init__(self, spriteList, clientID, player):
@@ -54,3 +59,18 @@ class WallSprite(pg.sprite.Sprite):
         self.y_tile = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
+
+class ProjectileSprite(pg.sprite.Sprite):
+    def __init__(self, spriteList, projectile):
+
+        self.spriteList = spriteList
+        self.groups = spriteList.all_sprites, spriteList.projectiles
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(BLACK)
+        self.rect = self.image.get_rect()
+        self.clientID = projectile.clientID
+        self.x_tile = projectile.x
+        self.y_tile = projectile.y
+        self.rect.x = projectile.x * PROJECTILESIZE
+        self.rect.y = projectile.y * PROJECTILESIZE
