@@ -9,10 +9,24 @@ from gamestate import GameState
 from gamecontroller import mouseEventUpdate, keyEventUpdate
 from clientmessages import MouseEventMessage, KeyEventMessage
 
+"""  on_new_client
+Client thread processed on server
+    1.  Read client connection message to get username
+    2.  Send client acceptance message with that clients new UUID
+    3.  Enter main infinite processing loop
+        i.  Send ONE message from the message queue
+        ii. Recv ONE message from the client
+            - TODO: Append message to game_updates queue
+
+@param client       :   
+@param connection   :   IP address of client
+@param bcast_q      :   client outgoing message queue
+"""
 def on_new_client(client, connection, bcast_q):
     ip = connection[0]
     port = connection[1]
     logging.debug("New connection from {} on {}".format(ip, port))
+
     data = pickle.loads(client.recv(1024))
     data.id = gamestate.newPlayer(data.name)
     client_qs[data.id] = bcast_q
@@ -21,7 +35,6 @@ def on_new_client(client, connection, bcast_q):
     
     while True:
         try:
-
             # Send the first message in the queue
             if not bcast_q.empty():
                 bcast_msg = bcast_q.get()
@@ -50,6 +63,12 @@ def on_new_client(client, connection, bcast_q):
 
     client.close()
 
+""" broadcast_all_clients
+Periodically add message to all clients message queues.
+The message added to their queues is the game state.
+
+@param period   :   time to wait between broadcasts
+"""
 def broadcast_all_clients(period):
     while True:
         for q in client_qs.keys():
@@ -60,7 +79,9 @@ def broadcast_all_clients(period):
 
         time.sleep(period)
 
-
+""" MAIN
+Be a server for a game
+"""
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
