@@ -42,6 +42,8 @@ class Player:
         self.clientID = -1
         self.x = 0
         self.y = 0
+        self.x_delt = 0
+        self.y_delt = 0
         self.health = 100
         self.resources = 0
         self.hasSnitch = False
