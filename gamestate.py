@@ -1,6 +1,7 @@
 import uuid
 import random
 import pygame
+from gamesettings import *
 
 class GameState:
     def __init__(self, fps, height, width, startHealth, startResources):
@@ -18,7 +19,7 @@ class GameState:
     def newPlayer(self, name):
         locationX = random.randrange(0, self.width)
         locationY = random.randrange(0, self.height)
-        new_id = uuid.uuid4()
+        new_id = str(uuid.uuid4())
         tempPlayer = Player(name, new_id, locationX, locationY, self.startHealth, self.startResources, False)
         self.players[new_id] = tempPlayer
         return new_id
@@ -39,15 +40,15 @@ class GameState:
 
 class Player:
     def __init__(self, name, clientID, x, y, health, resources, hasSnitch):
-        self.name = ""
-        self.clientID = -1
-        self.x = 0
-        self.y = 0
+        self.name = name
+        self.clientID = clientID
+        self.x = x
+        self.y = y
         self.x_delt = 0
         self.y_delt = 0
         self.health = 100
-        self.resources = 0
-        self.hasSnitch = False
+        self.resources = resources
+        self.hasSnitch = hasSnitch
 
 
 class Base:
@@ -55,8 +56,8 @@ class Base:
         self.clientID = -1
         self.level = 0
         self.resources = 0
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.health = 100
 
 
@@ -93,4 +94,4 @@ class Snitch:
         self.visible = False
 
 
-THE_GAMESTATE = GameState(.01, 100, 100, 10, 1000)
+THE_GAMESTATE = GameState(.1, WIDTH, HEIGHT, 10, 1000)

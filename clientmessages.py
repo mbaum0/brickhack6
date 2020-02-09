@@ -6,15 +6,14 @@ class ConnectMessage:
         self.id = id
 
 class KeyEventMessage:
-    def __init__(self, command, button_state):
+    def __init__(self, command):
         self.command = command
-        self.button_state = button_state
 
 class MouseEventMessage:
-    def __init__(self, x, y, button_state):
+    def __init__(self, x, y, trigger):
         self.x = x
         self.y = y
-        self.button_state = button_state
+        self.trigger = trigger
 
 class Keys(Enum):
     UP_PRESS = 1

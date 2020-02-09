@@ -53,7 +53,7 @@ def on_new_client(client, connection, bcast_q, game_updater_q):
         except (ConnectionResetError, EOFError):
             logging.debug("{} left [{}]".format(data.name, str(data.id)))
             del client_qs[data.id]
-            gamestate.remove_player(data.id)
+            THE_GAMESTATE.remove_player(data.id)
             break
 
     client.close()
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     game_updater_q = queue.Queue()
     game_updater = threading.Thread(target=update_game, name="Game Updater", args=(game_updater_q,))
     game_updater.daemon = True
-    broadcaster.start()
+    game_updater.start()
 
     try:
         sock.bind((HOST, PORT))
