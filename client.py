@@ -5,7 +5,7 @@ import threading
 import time
 import struct
 from map import add_resources
-from clientmessages import *
+from clientmessages import ConnectMessage
 
 server_host = "localhost"
 server_port = 5555
