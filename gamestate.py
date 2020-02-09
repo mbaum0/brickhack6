@@ -1,5 +1,6 @@
 import uuid
 import random
+from gamesettings import *
 
 class GameState:
     def __init__(self, fps, height, width, startHealth, startResources):
@@ -90,4 +91,4 @@ class Snitch:
         self.visible = False
 
 
-THE_GAMESTATE = GameState(.01, 100, 100, 10, 1000)
+THE_GAMESTATE = GameState(.1, WIDTH, HEIGHT, 10, 1000)
