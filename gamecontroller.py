@@ -2,7 +2,7 @@ from gamestate import GameState
 import logging
 import time
 from gamestate import THE_GAMESTATE
-from clientmessages import KeyEventMessage, MouseEventMessage, Keys, ButtonState
+from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
 
 def update_game(game_updater_q):
     while True:
