@@ -3,6 +3,7 @@ import logging
 import time, math
 from gamestate import THE_GAMESTATE, Projectile
 from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
+from gamesettings import *
 
 """
     This class is used specifically to track a players delta movements
@@ -24,33 +25,56 @@ def update_game(game_updater_q):
     # Value = Movement obj
     movements = {}
     while True:
+        # Process client messages for player actions (move/shoot)
         if not game_updater_q.empty():
             event, id = game_updater_q.get()
             if isinstance(event, KeyEventMessage):
                 handleKeyPress(event, id, movements)
             elif isinstance(event, MouseEventMessage):
                 handleMousePress(event, id)
-        # Update player positions
+        # Update projectiles
+        collision_map = {}
+        update_projectiles(collision_map)
+        # Move players
         for id in movements.keys():
             movement = movements[id]
             player = movement.player
             player.x += movement.dx
             player.y += movement.dy
-        update_projectiles()
+            # If player got shot
+            x = player.x
+            y = player.y
+
+            for i in range(x, x+TILESIZE, 1):
+                for j in range(y, y+TILESIZE, 1):
+                    if (i, j) in collision_map:
+                        bullet = collision_map[(i, j)]
+                        if bullet.clientID != player.clientID:
+                            player.health -= bullet.damage
+                            if bullet in THE_GAMESTATE.projectiles:
+                                    THE_GAMESTATE.projectiles.pop(THE_GAMESTATE.projectiles.index(bullet))
+
     
         time.sleep(.01)
 
 
-def update_projectiles():
-    bullets = THE_GAMESTATE.projectiles
-    for bullet in bullets:
+def update_projectiles(collision_map):
+    for bullet in THE_GAMESTATE.projectiles:
         print(bullet)
         if bullet.frames > 0:
             bullet.x += int(bullet.vel * math.cos(bullet.angle))
             bullet.y += int(bullet.vel * math.sin(bullet.angle))
             bullet.frames -= 1
+            # Populate collision map
+            x = bullet.x
+            y = bullet.y
+            for i in range(x, x+PROJECTILESIZE, 1):
+                for j in range(y, y+PROJECTILESIZE, 1):
+                    if x<THE_GAMESTATE.width and y<THE_GAMESTATE.height:
+                        collision_map[(i, j)] = bullet
+                        pass
         else:
-            bullets.pop(bullets.index(bullet))
+            THE_GAMESTATE.projectiles.pop(THE_GAMESTATE.projectiles.index(bullet))
 
 
 """
