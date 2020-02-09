@@ -27,6 +27,6 @@ class Keys(Enum):
     RIGHT_RELEASE = 8
 
 
-class ButtonState(Enum):
+class Trigger(Enum):
     PRESSED = 1
     RELEASED = 2
