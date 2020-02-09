@@ -1,8 +1,13 @@
-from gamestate import GameState
+
 import logging
-import time, math
-from gamestate import THE_GAMESTATE, Projectile
+import time, math, pygame as pg
+from gamestate import THE_GAMESTATE, Projectile, Resource
+from random import randrange
+from gamesettings import *
 from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
+
+clock = pg.time.Clock()
+
 
 """
     This class is used specifically to track a players delta movements
@@ -37,9 +42,15 @@ def update_game(game_updater_q):
             player.x += movement.dx
             player.y += movement.dy
         update_projectiles()
-    
+        add_resources()
         time.sleep(.01)
 
+def add_resources():
+    # TODO: Add delay to resource repopulate
+    if len(THE_GAMESTATE.resources) < MAX_RESOURCES:
+        randomx = randrange(WIDTH)
+        randomy = randrange(HEIGHT)
+        THE_GAMESTATE.resources.append(Resource(1, randomx, randomy, 1))
 
 def update_projectiles():
     bullets = THE_GAMESTATE.projectiles

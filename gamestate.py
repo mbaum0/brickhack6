@@ -63,10 +63,10 @@ class Base:
 
 class Resource:
     def __init__(self, resourceID, x, y, value):
-        self.resourceID = -1
-        self.x = 0
-        self.y = 0
-        self.value = 0
+        self.resourceID = resourceID
+        self.x = x
+        self.y = y
+        self.value = value
 
 
 class Projectile:
