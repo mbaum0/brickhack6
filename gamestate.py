@@ -11,7 +11,7 @@ class GameState:
         self.startHealth = startHealth
         self.startResources = startResources
         self.players = {}
-        self.bases = []
+        self.bases = {}
         self.resources = []
         self.projectiles = []
         self.walls = []
@@ -20,7 +20,7 @@ class GameState:
         locationX = random.randrange(0, self.width)
         locationY = random.randrange(0, self.height)
         new_id = str(uuid.uuid4())
-        tempPlayer = Player(name, new_id, locationX, locationY, self.startHealth, self.startResources, False)
+        tempPlayer = Player(name, new_id, locationX, locationY, False)
         self.players[new_id] = tempPlayer
         return new_id
 
@@ -39,7 +39,7 @@ class GameState:
         self.walls.append(leftWall)
 
 class Player:
-    def __init__(self, name, clientID, x, y, health, resources, hasSnitch):
+    def __init__(self, name, clientID, x, y, hasSnitch):
         self.name = name
         self.clientID = clientID
         self.x = x
@@ -47,15 +47,17 @@ class Player:
         self.x_delt = 0
         self.y_delt = 0
         self.health = 100
-        self.resources = resources
+        self.bricks = 0
+        self.iron = 0
         self.hasSnitch = hasSnitch
 
 
 class Base:
-    def __init__(self, clientID, level, resources, x, y, health):
-        self.clientID = -1
-        self.level = 0
-        self.resources = 0
+    def __init__(self, clientID, x, y):
+        self.clientID = clientID
+        self.level = 1
+        self.bricks = 0
+        self.iron = 0
         self.x = x
         self.y = y
         self.health = 100

@@ -1,22 +1,23 @@
-
 import logging
 import time, math, pygame as pg
-from gamestate import THE_GAMESTATE, Projectile, Resource
+from gamestate import THE_GAMESTATE, Projectile, Resource, Base
 from random import randrange
 from gamesettings import *
 from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
 
 clock = pg.time.Clock()
 
-
 """
     This class is used specifically to track a players delta movements
 """
+
+
 class Movement:
     def __init__(self, player, dx, dy):
         self.player = player
         self.dx = dx
         self.dy = dy
+
 
 """
     This function handles events issued from the users. These include both key and mouse inputs. Also, each player's
@@ -24,6 +25,8 @@ class Movement:
     
     @:param game_updater_q: a queue of game events
 """
+
+
 def update_game(game_updater_q):
     # Key = player ID
     # Value = Movement obj
@@ -32,9 +35,9 @@ def update_game(game_updater_q):
         if not game_updater_q.empty():
             event, id = game_updater_q.get()
             if isinstance(event, KeyEventMessage):
-                handleKeyPress(event, id, movements)
+                handle_key_press(event, id, movements)
             elif isinstance(event, MouseEventMessage):
-                handleMousePress(event, id)
+                handle_mouse_press(event, id)
         # Update player positions
         for id in movements.keys():
             movement = movements[id]
@@ -45,12 +48,14 @@ def update_game(game_updater_q):
         add_resources()
         time.sleep(.01)
 
+
 def add_resources():
     # TODO: Add delay to resource repopulate
     if len(THE_GAMESTATE.resources) < MAX_RESOURCES:
         randomx = randrange(WIDTH)
         randomy = randrange(HEIGHT)
         THE_GAMESTATE.resources.append(Resource(1, randomx, randomy, 1))
+
 
 def update_projectiles():
     bullets = THE_GAMESTATE.projectiles
@@ -72,7 +77,9 @@ def update_projectiles():
     @:param id              : the server id of the player who issued the event
     @:param moving_players  : a dictionary containing a all of the players with non-zero delta positions
 """
-def handleKeyPress(event, id, moving_players):
+
+
+def handle_key_press(event, id, moving_players):
     if not id in moving_players.keys():
         move = Movement(THE_GAMESTATE.players[id], 0, 0)
     else:
@@ -93,8 +100,8 @@ def handleKeyPress(event, id, moving_players):
     moving_players[id] = move
 
     # Remove non moving player from movements dictionary
-    #if move.dx == 0 and move.dy == 0:
-        #del moving_players[id]
+    # if move.dx == 0 and move.dy == 0:
+    # del moving_players[id]
 
 
 """
@@ -104,16 +111,35 @@ def handleKeyPress(event, id, moving_players):
     @:param     event   : the player input event of class MouseEventMessage from clientmessages.py
     @:param     id      : the server id of the player who issued the event
 """
-def handleMousePress(event, id):
+
+
+def handle_mouse_press(event, id):
     player = THE_GAMESTATE.players[id]
     if not event.trigger is Trigger.PRESSED:
         return
     if (event.x - player.x) == 0:
-        slope = event.y - player.y/1
+        slope = event.y - player.y / 1
     else:
-        slope = (event.y - player.y)/(event.x - player.x)
+        slope = (event.y - player.y) / (event.x - player.x)
     theta = math.atan(slope)
     if (event.x - player.x) < 0:
         theta += math.pi
     THE_GAMESTATE.projectiles.append(Projectile(id, player.x, player.y, theta))
 
+
+def dump_resources(id):
+    player = THE_GAMESTATE.players[id]
+    base = THE_GAMESTATE.bases[id]
+    received_bricks = player.bricks
+    received_iron = player.iron
+    player.bricks = 0
+    player.iron = 0
+    base.bricks += received_bricks
+    base.iron += received_iron
+
+    if base.bricks > BASE_LEVELS.get(base.level)[0] and \
+            base.iron > BASE_LEVELS.get(base.level)[1] and base.level < BASE_LEVELS.keys()[-1]:
+        base.level += 1
+        base.bricks = 0
+        base.iron = 0
+        base.health = base.health * 2

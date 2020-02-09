@@ -6,7 +6,6 @@ import time
 import struct
 import pygame as pg
 from gamesettings import *
-from map import add_resources
 from sprites import MakeSprites
 from clientmessages import *
 import queue

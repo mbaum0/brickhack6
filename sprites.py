@@ -43,7 +43,8 @@ class PlayerSprite(pg.sprite.Sprite):
         self.name = player.name
         self.clientID = clientID
         self.health = player.health
-        self.resources = player.resources
+        self.bricks = player.bricks
+        self.iron = player.iron
         self.hasSnitch = player.hasSnitch
 
 class WallSprite(pg.sprite.Sprite):

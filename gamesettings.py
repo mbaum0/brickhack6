@@ -23,3 +23,11 @@ PROJECTILESIZE = 8
 BULLET_FRAMES = 100
 
 MAX_RESOURCES = 20
+
+BASE_LEVELS = {
+    1 : [2, 0],
+    2 : [5, 0],
+    3 : [2, 1],
+    4 : [10, 3],
+    5 : [0, 5]
+}
