@@ -5,9 +5,9 @@ import threading
 import logging
 import queue
 import struct
+from gamestate import THE_GAMESTATE
 from gamestate import GameState
-from gamecontroller import mouseEventUpdate, keyEventUpdate
-from clientmessages import MouseEventMessage, KeyEventMessage
+from gamecontroller import update_game
 
 """  on_new_client
 Client thread processed on server
@@ -18,17 +18,18 @@ Client thread processed on server
         ii. Recv ONE message from the client
             - TODO: Append message to game_updates queue
 
-@param client       :   
-@param connection   :   IP address of client
-@param bcast_q      :   client outgoing message queue
+@param client         :   
+@param connection     :   IP address of client
+@param bcast_q        :   client outgoing message queue
+@param game_updater_q :   send game updates here 
 """
-def on_new_client(client, connection, bcast_q):
+def on_new_client(client, connection, bcast_q, game_updater_q):
     ip = connection[0]
     port = connection[1]
     logging.debug("New connection from {} on {}".format(ip, port))
 
     data = pickle.loads(client.recv(1024))
-    data.id = gamestate.newPlayer(data.name)
+    data.id = THE_GAMESTATE.newPlayer(data.name)
     client_qs[data.id] = bcast_q
     logging.debug("New user created with name {}".format(data.name))
     client.sendall(pickle.dumps(data))
@@ -45,13 +46,7 @@ def on_new_client(client, connection, bcast_q):
             # Get a message from the user and deal with it
             try:
                 client_message = pickle.loads(client.recv(1024))
-                if(isinstance(client_message, MouseEventMessage)):
-                    mouseEventUpdate(client_message, data.id)
-                elif(isinstance(client_message, KeyEventMessage)):
-                    keyEventUpdate(client_message, data.id)
-                else:
-                    logging.debug("{} left [{}]".format(data.name, str(data.id)))
-                    break
+                game_updater_q.put((client_message, data.id))
             except BlockingIOError:
                 pass
 
@@ -73,7 +68,7 @@ def broadcast_all_clients(period):
     while True:
         for q in client_qs.keys():
             try:
-                client_qs[q].put(gamestate)
+                client_qs[q].put(THE_GAMESTATE)
             except KeyError:
                 pass # no longer connected
 
@@ -85,8 +80,6 @@ Be a server for a game
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
-    gamestate = GameState(.01, 100, 100, 10, 1000)
-    gamestate.createBoundWalls()
 
     HOST, PORT = "0.0.0.0", 5555
     sock = socket.socket()
@@ -94,8 +87,13 @@ if __name__ == "__main__":
     client_qs = {}
     client_threads = []
 
-    broadcaster = threading.Thread(target=broadcast_all_clients, name="Broadcaster", args=(gamestate.fps,))
+    broadcaster = threading.Thread(target=broadcast_all_clients, name="Broadcaster", args=(THE_GAMESTATE.fps,))
     broadcaster.daemon = True
+    broadcaster.start()
+
+    game_updater_q = queue.Queue()
+    game_updater = threading.Thread(target=update_game, name="Game Updater", args=(game_updater_q,))
+    game_updater.daemon = True
     broadcaster.start()
 
     try:
@@ -111,7 +109,7 @@ if __name__ == "__main__":
             client, ip = sock.accept()
             client.setblocking(0)
             bcast_q = queue.Queue()
-            t = threading.Thread(target=on_new_client, args=(client, ip, bcast_q))
+            t = threading.Thread(target=on_new_client, args=(client, ip, bcast_q, game_updater_q))
             client_threads.append(t)
             t.start()
         except KeyboardInterrupt:

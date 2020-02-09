@@ -4,7 +4,7 @@ import pickle
 import threading
 import time
 import struct
-from map import draw_map
+from map import add_resources
 from clientmessages import *
 
 server_host = "localhost"
@@ -19,6 +19,7 @@ elif numargs == 3:
     username = sys.argv[1]
     server_host = sys.argv[2]
 elif numargs > 3:
+
     username = sys.argv[1]
     server_host = sys.argv[2]
     server_port = sys.argv[3]

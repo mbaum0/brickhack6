@@ -86,3 +86,6 @@ class Snitch:
         self.x = 0
         self.y = 0
         self.visible = False
+
+
+THE_GAMESTATE = GameState(.01, 100, 100, 10, 1000)

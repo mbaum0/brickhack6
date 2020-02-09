@@ -1,14 +1,12 @@
 from gamestate import GameState
 import logging
+import time
+from gamestate import THE_GAMESTATE
 
-# TODO 
-# Handle a mouse event sent from a player
-def mouseEventUpdate(event, player_id):
-    logging.info("Unimplemented function mouseEventUpdate")
-    return 0
+def update_game(game_updater_q):
+    while True:
+        if not game_updater_q.empty():
+            event, id = game_updater_q.get()
 
-# TODO
-# Handle a key event sent from a player
-def keyEventUpdate(event, player_id):
-    logging.info("Unimplemented function keyEventUpdate")
-    return 0
+        time.sleep(.1)
+
