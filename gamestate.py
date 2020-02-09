@@ -72,8 +72,8 @@ class Resource:
 class Projectile:
     def __init__(self, clientID, x, y, angle):
         self.clientID = -1
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
         self.angle = angle
         self.damage = 1
         self.vel = 10

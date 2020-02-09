@@ -4,12 +4,21 @@ import time, math
 from gamestate import THE_GAMESTATE, Projectile
 from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
 
+"""
+    This class is used specifically to track a players delta movements
+"""
 class Movement:
     def __init__(self, player, dx, dy):
         self.player = player
         self.dx = dx
         self.dy = dy
 
+"""
+    This function handles events issued from the users. These include both key and mouse inputs. Also, each player's
+    positions are updated who's deltas are non-zero. 
+    
+    @:param game_updater_q: a queue of game events
+"""
 def update_game(game_updater_q):
     # Key = player ID
     # Value = Movement obj
@@ -30,6 +39,15 @@ def update_game(game_updater_q):
 
         time.sleep(.1)
 
+"""
+    This function handles all keyboard input from the user. When a movement key is pressed, the delta parameter of
+    the player is updated. This is done as opposed to directly updating the player position in order to easily
+    handle a player holding down an input key and not doing unnecessary processing.
+    
+    @:param event           : the player input event of class KeyEventMessage from clientmessages.py
+    @:param id              : the server id of the player who issued the event
+    @:param moving_players  : a dictionary containing a all of the players with non-zero delta positions
+"""
 def handleKeyPress(event, id, moving_players):
     if not id in moving_players.keys():
         move = Movement(THE_GAMESTATE.players[id], 0, 0)
@@ -54,6 +72,14 @@ def handleKeyPress(event, id, moving_players):
     #if move.dx == 0 and move.dy == 0:
         #del moving_players[id]
 
+
+"""
+    This function handles all mouse click input from the user. When a mouse click event is received, calculate the 
+    direction to which a projectile will be fired, and add a projectile 
+
+    @:param     event   : the player input event of class MouseEventMessage from clientmessages.py
+    @:param     id      : the server id of the player who issued the event
+"""
 def handleMousePress(event, id):
     player = THE_GAMESTATE.players[id]
     if not event.trigger is Trigger.PRESSED:
