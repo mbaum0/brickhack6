@@ -107,7 +107,7 @@ def run_game():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
                         messageQ.put(KeyEventMessage(Keys.UP_PRESS))
-                    elif event.key == pg.K_DOWN:
+                    elif event.key == pg.K_UP:
                         messageQ.put(KeyEventMessage(Keys.DOWN_PRESS))
                     elif event.key == pg.K_LEFT:
                         messageQ.put(KeyEventMessage(Keys.LEFT_PRESS))
