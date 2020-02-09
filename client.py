@@ -4,7 +4,10 @@ import pickle
 import threading
 import time
 import struct
+import pygame as pg
+from gamesettings import *
 from map import add_resources
+from sprites import MakeSprites
 from clientmessages import ConnectMessage
 
 server_host = "localhost"
@@ -16,6 +19,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 my_id = None
 
 def connect_to_server(host, port):
+    global gamestate
+    global my_id
     try:
         # Initial connection
         print("{} {}".format(host,port), flush=True)
@@ -47,12 +52,42 @@ def connect_to_server(host, port):
     finally:
         sock.close()
 
+
+
+"""
+PYGAME SHITE
+"""
+window = pg.display.set_mode((WIDTH, HEIGHT))
+pg.display.set_caption("Client")
+
+def draw_grid():
+    for x in range(0, WIDTH, TILESIZE):
+        pg.draw.line(window, LIGHTGREY, (x, 0), (x, HEIGHT))
+    for y in range(0, HEIGHT, TILESIZE):
+        pg.draw.line(window, LIGHTGREY, (0, y), (WIDTH, y))
+
+
+def redraw_window():
+    global gamestate
+    global my_id
+    
+    sprites = MakeSprites(gamestate, str(my_id))
+    window.fill(BGCOLOR)
+    draw_grid()
+    sprites.all_sprites.draw(window)
+    pg.display.update()
+
+
+
 """ TODO run_game
 Main function to update game display based upon game state
 """
 def run_game():
     while True:
-        time.sleep(1)
+        redraw_window()
+
+        for _ in pg.event.get():
+            pass
 
 """ MAIN
     1. Parse command line input
@@ -77,4 +112,7 @@ if __name__ == "__main__":
     # Start main server thread and run the game
     server_thread = threading.Thread(target=connect_to_server, args=(server_host, server_port), daemon=True)
     server_thread.start()
+    
+    while gamestate == None:
+        time.sleep(1)
     run_game()
