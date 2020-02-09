@@ -48,11 +48,15 @@ def connect_to_server(host, port):
             length = struct.unpack('!I', buf)[0]
 
             received = sock.recv(length)
+                
             gamestate = pickle.loads(received)
-            #print(gamestate, flush=True)
 
             if not messageQ.empty():
-                sock.sendall(pickle.dumps(messageQ.get()))
+                msg = pickle.dumps(messageQ.get())
+                length = struct.pack('!I', len(msg))
+                msg = length + msg
+
+                sock.sendall(msg)
 
     except ConnectionResetError:
         print("Server disconnected", flush=True)

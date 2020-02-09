@@ -44,11 +44,14 @@ def on_new_client(client, connection, bcast_q, game_updater_q):
                 msg = length + msg
                 client.sendall(msg)
             # Get a message from the user and deal with it
-            try:
-                client_message = pickle.loads(client.recv(1024))
-                game_updater_q.put((client_message, data.id))
-            except BlockingIOError:
-                pass
+
+            buf = ""
+            while len(buf) < 4:
+                buf += sock.recv(4 - len(buf))
+            
+            length = struct.unpack('!I', buf)[0]
+            client_message = pickle.loads(client.recv(length))
+            game_updater_q.put((client_message, data.id))
 
         except (ConnectionResetError, EOFError):
             break
