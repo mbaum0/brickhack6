@@ -88,6 +88,7 @@ def redraw_window():
     window.fill(BGCOLOR)
     draw_grid()
     sprites.all_sprites.draw(window)
+    
     pg.display.update()
 
 

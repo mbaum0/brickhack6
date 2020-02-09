@@ -74,3 +74,4 @@ class ProjectileSprite(pg.sprite.Sprite):
         self.y_tile = projectile.y
         self.rect.x = projectile.x
         self.rect.y = projectile.y
+        self.image= pg.image.load("bullet.png")

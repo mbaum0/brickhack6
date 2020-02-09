@@ -77,7 +77,7 @@ class Projectile:
         self.frames = BULLET_FRAMES
         self.angle = angle
         self.damage = 1
-        self.vel = 10
+        self.vel = 1
 
 
 class Wall:

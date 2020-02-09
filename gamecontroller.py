@@ -104,5 +104,5 @@ def handleMousePress(event, id):
     theta = math.atan(slope)
     if (event.x - player.x) < 0:
         theta += math.pi
-    THE_GAMESTATE.projectiles.append(Projectile(id, player.x, player.y, theta))
+    THE_GAMESTATE.projectiles.append(Projectile(id, player.x + player.rect.x, player.y + player.rect.y, theta))
 
