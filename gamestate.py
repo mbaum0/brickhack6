@@ -94,4 +94,4 @@ class Snitch:
         self.visible = False
 
 
-THE_GAMESTATE = GameState(.1, WIDTH, HEIGHT, 10, 1000)
+THE_GAMESTATE = GameState(.03, WIDTH, HEIGHT, 10, 1000)

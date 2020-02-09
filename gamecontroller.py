@@ -27,8 +27,8 @@ def update_game(game_updater_q):
             player = movement.player
             player.x += movement.dx
             player.y += movement.dy
-
-        time.sleep(.1)
+    
+        time.sleep(.01)
 
 def handleKeyPress(event, id, moving_players):
     if not id in moving_players.keys():
@@ -36,13 +36,13 @@ def handleKeyPress(event, id, moving_players):
     else:
         move = moving_players[id]
     if event.command is Keys.UP_PRESS:
-        move.dy = -5
+        move.dy = -3
     elif event.command is Keys.DOWN_PRESS:
-        move.dy = 5
+        move.dy = 3
     elif event.command is Keys.LEFT_PRESS:
-        move.dx = -5
+        move.dx = -3
     elif event.command is Keys.RIGHT_PRESS:
-        move.dx = 5
+        move.dx = 3
     elif event.command is Keys.UP_RELEASE or event.command is Keys.DOWN_RELEASE:
         move.dy = 0
     elif event.command is Keys.RIGHT_RELEASE or event.command is Keys.LEFT_RELEASE:

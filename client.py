@@ -10,6 +10,8 @@ from map import add_resources
 from sprites import MakeSprites
 from clientmessages import *
 import queue
+
+
 server_host = "localhost"
 server_port = 5555
 username = "user"
@@ -47,7 +49,7 @@ def connect_to_server(host, port):
 
             received = sock.recv(length)
             gamestate = pickle.loads(received)
-            print(gamestate, flush=True)
+            #print(gamestate, flush=True)
 
             if not messageQ.empty():
                 sock.sendall(pickle.dumps(messageQ.get()))
