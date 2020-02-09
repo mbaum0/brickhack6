@@ -2,7 +2,8 @@ import uuid
 import random
 
 class GameState:
-    def __init__(self, height, width, startHealth, startResources):
+    def __init__(self, fps, height, width, startHealth, startResources):
+        self.fps = fps
         self.height = height
         self.width = width
         self.startHealth = startHealth
@@ -20,6 +21,9 @@ class GameState:
         tempPlayer = Player(name, new_id, locationX, locationY, self.startHealth, self.startResources, False)
         self.players[new_id] = tempPlayer
         return new_id
+
+    def remove_player(self, id):
+        del self.players[id]
 
     def createBoundWalls(self):
         topWall = Wall(0, 0, self.width, 0)

@@ -3,6 +3,7 @@ import sys
 import pickle
 import threading
 import time
+import struct
 from clientmessages import *
 
 server_host = "localhost"
@@ -45,7 +46,13 @@ def connect_to_server(host, port):
         print("Sever gave us a new ID!: " + str(my_id), flush=True)
 
         while True:
-            received = sock.recv(1024)
+            buf = b''
+            while len(buf) < 4:
+                buf += sock.recv(4 - len(buf))
+            
+            length = struct.unpack('!I', buf)[0]
+
+            received = sock.recv(length)
             gamestate = pickle.loads(received)
             print(gamestate, flush=True)
 
