@@ -44,11 +44,13 @@ def update_game(game_updater_q):
 def update_projectiles():
     bullets = THE_GAMESTATE.projectiles
     for bullet in bullets:
-        #if bullet.x < 20 and bullet.y > 0:
+        print(bullet)
         if bullet.frames > 0:
             bullet.x += int(bullet.vel * math.cos(bullet.angle))
             bullet.y += int(bullet.vel * math.sin(bullet.angle))
             bullet.frames -= 1
+        else:
+            bullets.pop(bullets.index(bullet))
 
 
 """
