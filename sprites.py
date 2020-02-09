@@ -67,7 +67,7 @@ class ProjectileSprite(pg.sprite.Sprite):
         self.groups = spriteList.all_sprites, spriteList.projectiles
         pg.sprite.Sprite.__init__(self, self.groups)
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(BLACK)
+        self.image.fill(WHITE)
         self.rect = self.image.get_rect()
         self.clientID = projectile.clientID
         self.x_tile = projectile.x
