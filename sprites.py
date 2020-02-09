@@ -72,5 +72,5 @@ class ProjectileSprite(pg.sprite.Sprite):
         self.clientID = projectile.clientID
         self.x_tile = projectile.x
         self.y_tile = projectile.y
-        self.rect.x = projectile.x * PROJECTILESIZE
-        self.rect.y = projectile.y * PROJECTILESIZE
+        self.rect.x = projectile.x
+        self.rect.y = projectile.y
