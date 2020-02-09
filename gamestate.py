@@ -74,6 +74,7 @@ class Projectile:
         self.clientID = clientID
         self.x = x
         self.y = y
+        self.frames = BULLET_FRAMES
         self.angle = angle
         self.damage = 1
         self.vel = 10

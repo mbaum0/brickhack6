@@ -28,11 +28,16 @@ def on_new_client(client, connection, bcast_q, game_updater_q):
     port = connection[1]
     logging.debug("New connection from {} on {}".format(ip, port))
 
-    data = pickle.loads(client.recv(1024))
-    data.id = THE_GAMESTATE.newPlayer(data.name)
-    client_qs[data.id] = bcast_q
-    logging.debug("New user created with name {}".format(data.name))
-    client.sendall(pickle.dumps(data))
+    while True:
+        try:
+            data = pickle.loads(client.recv(1024))
+            data.id = THE_GAMESTATE.newPlayer(data.name)
+            client_qs[data.id] = bcast_q
+            logging.debug("New user created with name {}".format(data.name))
+            client.sendall(pickle.dumps(data))
+            break
+        except BlockingIOError:
+            pass
     
     while True:
         try:
