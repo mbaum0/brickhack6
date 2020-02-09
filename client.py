@@ -99,6 +99,11 @@ def run_game():
         redraw_window()
 
         for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    window.quit()
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_ESCAPE:
+                        window.quit()
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_UP:
                         messageQ.put(KeyEventMessage(Keys.UP_PRESS))

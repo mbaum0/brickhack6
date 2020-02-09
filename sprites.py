@@ -20,7 +20,7 @@ class MakeSprites:
             PlayerSprite(self, pId, players[pId])
 
         self.player = PlayerSprite(self, ID, gamestate.players[ID])
-
+        self.player.image.fill(BLUE)
 
 
 class PlayerSprite(pg.sprite.Sprite):
