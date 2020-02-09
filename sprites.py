@@ -33,7 +33,7 @@ class PlayerSprite(pg.sprite.Sprite):
         self.groups = spriteList.all_sprites, spriteList.players
         pg.sprite.Sprite.__init__(self, self.groups)
         self.spriteList = spriteList
-        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = pg.Surface((PLAYERSIZE, PLAYERSIZE))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.x = player.x
@@ -52,7 +52,7 @@ class WallSprite(pg.sprite.Sprite):
         self.spriteList = spriteList
         self.groups = spriteList.all_sprites, spriteList.walls
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = pg.Surface((PLAYERSIZE, PLAYERSIZE))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.x_tile = x

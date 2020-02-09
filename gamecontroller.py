@@ -2,6 +2,7 @@ from gamestate import GameState
 import logging
 import time, math
 from gamestate import THE_GAMESTATE, Projectile
+from gamesettings import *
 from clientmessages import KeyEventMessage, MouseEventMessage, Keys, Trigger
 
 """
@@ -104,5 +105,5 @@ def handleMousePress(event, id):
     theta = math.atan(slope)
     if (event.x - player.x) < 0:
         theta += math.pi
-    THE_GAMESTATE.projectiles.append(Projectile(id, player.x + player.rect.x, player.y + player.rect.y, theta))
+    THE_GAMESTATE.projectiles.append(Projectile(id, player.x, player.y, theta))
 
