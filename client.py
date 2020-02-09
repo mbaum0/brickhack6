@@ -10,7 +10,7 @@ from map import add_resources
 from sprites import MakeSprites
 from clientmessages import *
 import queue
-
+from pickle import UnpicklingError
 
 server_host = "localhost"
 server_port = 5555
@@ -47,9 +47,11 @@ def connect_to_server(host, port):
             
             length = struct.unpack('!I', buf)[0]
 
-            received = sock.recv(length)
-                
-            gamestate = pickle.loads(received)
+            try:
+                received = sock.recv(length)
+                gamestate = pickle.loads(received)
+            except UnpicklingError:
+                pass
 
             if not messageQ.empty():
                 msg = pickle.dumps(messageQ.get())
