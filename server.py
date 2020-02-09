@@ -94,7 +94,7 @@ if __name__ == "__main__":
     game_updater_q = queue.Queue()
     game_updater = threading.Thread(target=update_game, name="Game Updater", args=(game_updater_q,))
     game_updater.daemon = True
-    broadcaster.start()
+    game_updater.start()
 
     try:
         sock.bind((HOST, PORT))

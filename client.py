@@ -41,7 +41,6 @@ def connect_to_server(host, port):
             received = sock.recv(length)
             gamestate = pickle.loads(received)
             print(gamestate, flush=True)
-            draw_map(gamestate)
 
     except ConnectionResetError:
         print("Server disconnected", flush=True)
