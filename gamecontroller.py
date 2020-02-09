@@ -36,8 +36,20 @@ def update_game(game_updater_q):
             player = movement.player
             player.x += movement.dx
             player.y += movement.dy
+        update_projectiles()
     
         time.sleep(.01)
+
+
+def update_projectiles():
+    bullets = THE_GAMESTATE.projectiles
+    for bullet in bullets:
+        #if bullet.x < 20 and bullet.y > 0:
+        if bullet.frames > 0:
+            bullet.x += int(bullet.vel * math.cos(bullet.angle))
+            bullet.y += int(bullet.vel * math.sin(bullet.angle))
+            bullet.frames -= 1
+
 
 """
     This function handles all keyboard input from the user. When a movement key is pressed, the delta parameter of
