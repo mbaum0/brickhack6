@@ -11,22 +11,6 @@ server_host = "localhost"
 server_port = 5555
 username = "user"
 
-# Input parser
-numargs = len(sys.argv)
-if numargs == 2:
-    username = sys.argv[1]
-elif numargs == 3:
-    username = sys.argv[1]
-    server_host = sys.argv[2]
-elif numargs > 3:
-
-    username = sys.argv[1]
-    server_host = sys.argv[2]
-    server_port = sys.argv[3]
-else:
-    print("USAGE: {} <username> <servername> <port>".format(sys.argv[0]))
-    exit()
-
 gamestate = None
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 my_id = None
@@ -64,14 +48,34 @@ def connect_to_server(host, port):
     finally:
         sock.close()
 
+""" TODO run_game
+Main function to update game display based upon game state
+"""
 def run_game():
     while True:
         time.sleep(1)
 
-
+""" MAIN
+    1. Parse command line input
+    2. Start thread to process all client comms
+    3. Enter main function to update game state model: run_game()
+"""
 if __name__ == "__main__":
+    # Parse command line input
+    numargs = len(sys.argv)
+    if numargs == 2:
+        username = sys.argv[1]
+    elif numargs == 3:
+        username = sys.argv[1]
+        server_host = sys.argv[2]
+    elif numargs > 3:
+        username = sys.argv[1]
+        server_host = sys.argv[2]
+        server_port = sys.argv[3]
+    else:
+        print("USAGE: {} <username> <servername> <port>".format(sys.argv[0]))
+        exit()
+    # Start main server thread and run the game
     server_thread = threading.Thread(target=connect_to_server, args=(server_host, server_port), daemon=True)
     server_thread.start()
-
-
     run_game()
