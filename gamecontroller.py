@@ -41,20 +41,22 @@ def handleKeyPress(event, id, moving_players):
         move.dy = 5
     elif event.command is Keys.LEFT_PRESS:
         move.dx = -5
-    elif event.command is Keys.LEFT_PRESS:
+    elif event.command is Keys.RIGHT_PRESS:
         move.dx = 5
     elif event.command is Keys.UP_RELEASE or event.command is Keys.DOWN_RELEASE:
         move.dy = 0
     elif event.command is Keys.RIGHT_RELEASE or event.command is Keys.LEFT_RELEASE:
         move.dx = 0
 
+    moving_players[id] = move
+
     # Remove non moving player from movements dictionary
-    if move.dx == 0 and move.dy == 0:
-        del moving_players[id]
+    #if move.dx == 0 and move.dy == 0:
+        #del moving_players[id]
 
 def handleMousePress(event, id):
     player = THE_GAMESTATE.players[id]
-    if not event.command is Trigger.PRESSED:
+    if not event.trigger is Trigger.PRESSED:
         return
     if (event.x - player.x) == 0:
         slope = event.y - player.y/1
