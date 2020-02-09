@@ -4,6 +4,7 @@ import pickle
 import threading
 import time
 import struct
+from map import draw_map
 from clientmessages import *
 
 server_host = "localhost"
@@ -55,6 +56,7 @@ def connect_to_server(host, port):
             received = sock.recv(length)
             gamestate = pickle.loads(received)
             print(gamestate, flush=True)
+            draw_map(gamestate)
 
     except ConnectionResetError:
         print("Server disconnected", flush=True)
