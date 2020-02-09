@@ -16,6 +16,7 @@ def on_new_client(client, connection, bcast_q):
     client.sendall(pickle.dumps(data))
     
     while True:
+        # Send the first message in the queue
         try:
             if not bcast_q.empty():
                 bcast_msg = bcast_q.get()
@@ -23,6 +24,18 @@ def on_new_client(client, connection, bcast_q):
         except ConnectionResetError:
             logging.debug("{} left [{}]".format(data.name, str(data.id)))
             break
+        # Get a message from the user and deal with it
+        try:
+            client_message = pickle.loads(client.recv(1024))
+            if(isinstance(client_message, MouseEventMessage)):
+                mouseEventUpdate(client_message, data.id)
+            elif(isinstance(client_message, KeyEventMessage)):
+                keyEventUpdate(client_message, data.id)
+            else:
+                logging.debug("{} left [{}]".format(data.name, str(data.id)))
+                break
+        except BlockingIOError:
+            logging.debug("No message from client.. but thats ok")
 
     client.close()
 
@@ -60,7 +73,8 @@ if __name__ == "__main__":
             clients.append(bcast_q)
             threading._start_new_thread(on_new_client, (client, ip, bcast_q))
         except KeyboardInterrupt:
-            logging.error("F this gracefully")
+            logging.error("Detected keyboard interrupt! Exiting application")
+            break
         except Exception as e:
             logging.error("F this hard: {e}")
     
