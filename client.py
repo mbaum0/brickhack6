@@ -33,9 +33,11 @@ def connect_to_server(host, port):
         # Initial connection
         print("{} {}".format(host,port), flush=True)
         sock.connect((host, port))
+
         # Initial server connection ConnectMessage
         connect_message = pickle.dumps(ConnectMessage(username, None))
         sock.sendall(connect_message)
+
         # Wait for server connection response
         received = sock.recv(1024)
         connect_message = pickle.loads(received)
@@ -47,6 +49,8 @@ def connect_to_server(host, port):
             gamestate = pickle.loads(received)
             print(gamestate, flush=True)
 
+    except ConnectionResetError:
+        print("Server disconnected", flush=True)
     finally:
         sock.close()
 
