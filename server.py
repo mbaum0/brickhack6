@@ -53,7 +53,7 @@ def on_new_client(client, connection, bcast_q, game_updater_q):
         except (ConnectionResetError, EOFError):
             logging.debug("{} left [{}]".format(data.name, str(data.id)))
             del client_qs[data.id]
-            gamestate.remove_player(data.id)
+            THE_GAMESTATE.remove_player(data.id)
             break
 
     client.close()
